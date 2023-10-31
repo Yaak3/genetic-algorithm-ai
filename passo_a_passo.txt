@@ -1,0 +1,17 @@
+primeiro - gerar população aleatoria
+segundo - calcular a aptidao de cada gene e armazenar
+terceiro - ordena a aptidao do menor para o pior
+quarto - seleciona os dez melhores e elimina os dez piores
+quinto - monta a rotela. - A roleta é da seguinte formam
+	O pior aparece uma vez na lista
+	o segundo pior aparece duas
+	o terceiro aparece tres vezes
+	e assim por diante
+sexto - seleciona os pais a partir de números aleatorios na roleta
+setimo - gera os filhos com base nos pais da roleta
+	cinco P1 e cinco P2
+	não podem ter números repetidos entre os filhos
+oitavo - gera a mutação
+	troca dois genes aleatórios de lugar
+nono - coloca os filhos novamente na matriz
+e refaz o processo por dez mil vezes
