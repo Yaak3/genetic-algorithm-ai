@@ -1,18 +1,10 @@
 import numpy as np
-from random import randint
 
-distancias = np.loadtxt('distancias.mat')
+base_distances = np.loadtxt('distances_between_cells.mat')
+base_population = np.zeros((20, 20), dtype=int)
 
-initial_pop = []
+def initialize_genetic_algorithm(base_population):
+    for row in range(len(base_population)):
+        base_population[row] = np.random.choice(np.arange(21), size=len(base_population), replace=False)
 
-for initital_pop in range(19):
-    individual = []
-    while(len(individual) != 19):
-        random_city = randint(0,20)
-
-        if(random_city not in individual):
-            individual.append(random_city)
-
-    initial_pop.append(individual)
-
-print(len(initial_pop))
+initialize_genetic_algorithm(base_population)
