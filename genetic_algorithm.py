@@ -1,4 +1,5 @@
 import numpy as np
+import random
 import math
 
 distances_matrix = np.transpose(np.loadtxt('distances_between_cells.mat'))
@@ -14,11 +15,12 @@ def initialize_chromosomes(chromosomes_matrix) -> None:
         chromosomes_matrix[row] = np.random.choice(np.arange(21), size=len(chromosomes_matrix), replace=False)
 
 def calculate_fitness(chromosomes_matrix, distances_matrix) -> None:
-    # no caso, a gente teria q randomizar os [x,y] das  celulas
     fitness_utility_matrix = np.zeros((20, 1), dtype=float)
     fitness_unitary_results = []
 
     for row in range(len(chromosomes_matrix)):
+        randomize_distances(distances_matrix)
+
         for column in range(len(chromosomes_matrix) - 1):
             fitness_unitary_results.append(execute_fitness_calculation(
                 distances_matrix[column][0], distances_matrix[column][1],
@@ -28,6 +30,11 @@ def calculate_fitness(chromosomes_matrix, distances_matrix) -> None:
         fitness_unitary_results.clear()
 
     chromosomes_matrix = np.hstack((chromosomes_matrix, fitness_utility_matrix))
+
+def randomize_distances(distances_matrix):
+    for distance in distances_matrix:
+        distance[0] = random.uniform(0, 1)
+        distance[1] = random.uniform(0, 1)
 
 def execute_fitness_calculation(origin_chromosome_x, origin_chromosome_y, destiny_chromosome_x, destiny_chromosome_y) -> float:
     return math.sqrt(math.pow(origin_chromosome_x - destiny_chromosome_x, 2) + math.pow(origin_chromosome_y - destiny_chromosome_y, 2))
