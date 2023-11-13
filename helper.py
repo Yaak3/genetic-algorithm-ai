@@ -1,10 +1,6 @@
 import numpy as np
 import math
 
-ITERATION_RANGE = 1
-distances_matrix = np.loadtxt('distances_between_cells.mat')
-chromosomes_matrix = np.zeros((20, 20), dtype=int)
-
 def initialize_chromosomes(chromosomes_matrix) -> []:
     for row in range(len(chromosomes_matrix)):
         chromosomes_matrix[row] = np.random.choice(np.arange(20), size=len(chromosomes_matrix), replace=False)
@@ -46,18 +42,9 @@ def get_best_chromosomes_from_matrix(chromosomes_matrix) -> []:
 
 def generate_roulette(chromosomes_matrix) -> []:
     roulette_array = []
+    chromosomes_matrix_without_fitness = chromosomes_matrix[:, :-1]
     chromosomes_matrix_len = len(chromosomes_matrix)
 
     for row in range(chromosomes_matrix_len):
-        roulette_array = roulette_array + [chromosomes_matrix[row]] * (chromosomes_matrix_len - row)
+        roulette_array = roulette_array + [chromosomes_matrix_without_fitness[row]] * (chromosomes_matrix_len - row)
     return roulette_array
-
-def execute_genetic_algorithm(chromosomes_matrix):
-    for _ in range(ITERATION_RANGE):
-        chromosomes_matrix = get_best_chromosomes_from_matrix(
-            get_chromosomes_ordered_by_fitness(get_chromosomes_merged_with_fitness(chromosomes_matrix, 
-                get_calculated_fitness(initialize_chromosomes(chromosomes_matrix), distances_matrix))))
-        roulette_array = generate_roulette(chromosomes_matrix)
-        print(roulette_array)
-
-execute_genetic_algorithm(chromosomes_matrix)
