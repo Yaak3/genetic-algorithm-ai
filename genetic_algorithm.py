@@ -8,10 +8,9 @@ chromosomes_matrix = np.zeros((20, 20), dtype=int)
 def initialize_chromosomes(chromosomes_matrix) -> []:
     for row in range(len(chromosomes_matrix)):
         chromosomes_matrix[row] = np.random.choice(np.arange(20), size=len(chromosomes_matrix), replace=False)
-
     return chromosomes_matrix
 
-def calculate_fitness(chromosomes_matrix, distances_matrix) -> []:
+def get_calculated_fitness(chromosomes_matrix, distances_matrix) -> []:
     fitness_utility  = []
     total_distance = 0
 
@@ -35,6 +34,9 @@ def calculate_fitness(chromosomes_matrix, distances_matrix) -> []:
 def execute_fitness_calculation(origin_chromosome_x, origin_chromosome_y, destiny_chromosome_x, destiny_chromosome_y) -> float:
     return math.sqrt(math.pow(origin_chromosome_x - destiny_chromosome_x, 2) + math.pow(origin_chromosome_y - destiny_chromosome_y, 2))
 
+def get_chromosomes_merged_with_fitness(chromosomes_matrix, fitness_distances_matrix) -> []:
+    return np.hstack((chromosomes_matrix, fitness_distances_matrix))
+
 def get_chromosomes_ordered_by_fitness(chromosomes_matrix) -> []:
     ordering_indexes = np.argsort(chromosomes_matrix[:, -1])[::-1]
     return chromosomes_matrix[ordering_indexes]
@@ -42,40 +44,20 @@ def get_chromosomes_ordered_by_fitness(chromosomes_matrix) -> []:
 def get_best_chromosomes_from_matrix(chromosomes_matrix) -> []:
     return chromosomes_matrix[:10, :]
 
-for _ in range(ITERATION_RANGE):
-    # arrumar essa parada de ficar retornando umonte de vezes
-    # faltaria a roleta pra criar os filhos, e depois a mutacao?
-    chromosomes_matrix = initialize_chromosomes(chromosomes_matrix)
-    fitness_distances_matrix = calculate_fitness(chromosomes_matrix, distances_matrix)
-    chromosomes_matrix = np.hstack((chromosomes_matrix, fitness_distances_matrix))
-    chromosomes_matrix = get_chromosomes_ordered_by_fitness(chromosomes_matrix)
-    chromosomes_matrix = get_best_chromosomes_from_matrix(chromosomes_matrix)
+def generate_roulette(chromosomes_matrix) -> []:
+    roulette_array = []
+    chromosomes_matrix_len = len(chromosomes_matrix)
 
-'''
-    def initialize_genetic_algorithm(chromosomes_matrix, distances_matrix) -> None:
-        initialize_chromosomes(chromosomes_matrix)
-        calculate_fitness(chromosomes_matrix, distances_matrix)
-        ordering_by_fitness_desc(chromosomes_matrix)
+    for row in range(chromosomes_matrix_len):
+        roulette_array = roulette_array + [chromosomes_matrix[row]] * (chromosomes_matrix_len - row)
+    return roulette_array
 
-    fitness_utility_matrix = np.zeros((20, 1), dtype=float)
-    fitness_unitary_results = []
+def execute_genetic_algorithm(chromosomes_matrix):
+    for _ in range(ITERATION_RANGE):
+        chromosomes_matrix = get_best_chromosomes_from_matrix(
+            get_chromosomes_ordered_by_fitness(get_chromosomes_merged_with_fitness(chromosomes_matrix, 
+                get_calculated_fitness(initialize_chromosomes(chromosomes_matrix), distances_matrix))))
+        roulette_array = generate_roulette(chromosomes_matrix)
+        print(roulette_array)
 
-    for row in range(len(chromosomes_matrix)):
-        randomize_distances(distances_matrix)
-
-        for column in range(len(chromosomes_matrix) - 1):
-            fitness_unitary_results.append(execute_fitness_calculation(
-                distances_matrix[column][0], distances_matrix[column][1],
-                distances_matrix[column + 1][0], distances_matrix[column + 1][1]))
-
-        fitness_utility_matrix[row] = sum(fitness_unitary_results)
-        fitness_unitary_results.clear()
-
-    chromosomes_matrix = np.hstack((chromosomes_matrix, fitness_utility_matrix))
-
-
-def randomize_distances(distances_matrix) -> None:
-    for distance in distances_matrix:
-        distance[0] = random.uniform(0, 1)
-        distance[1] = random.uniform(0, 1)
-'''
+execute_genetic_algorithm(chromosomes_matrix)
