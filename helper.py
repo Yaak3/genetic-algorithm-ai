@@ -35,7 +35,7 @@ def get_chromosomes_merged_with_fitness(chromosomes_matrix, fitness_distances_ma
     return np.hstack((chromosomes_matrix, fitness_distances_matrix))
 
 def get_chromosomes_ordered_by_fitness(chromosomes_matrix) -> []:
-    ordering_indexes = np.argsort(chromosomes_matrix[:, -1])[::-1]
+    ordering_indexes = np.argsort(chromosomes_matrix[:, -1])
     return chromosomes_matrix[ordering_indexes]
 
 def get_best_chromosomes_from_matrix(chromosomes_matrix) -> []:
@@ -81,10 +81,10 @@ def create_children(parrents):
     value_parent_a = 0
     value_parent_b = 0
 
-    for index in range(0,9,2):
+    for index in range(0, 9, 2):
         parent_a = parrents[index]
         parent_b = parrents[index + 1]
-        rand = randint(0,19)
+        rand = randint(0, 19)
 
         value_parent_a = parent_a[rand]
         value_parent_b = parent_b[rand]
@@ -94,12 +94,10 @@ def create_children(parrents):
 
         repeated_values = np.where(parent_a == value_parent_b)
 
-        while(len(repeated_values) > 1):
+        while (len(repeated_values[0]) > 1):
             teste = np.where(repeated_values != rand)
             print(rand)
             print(teste)
             break
 
         break
-
-        
