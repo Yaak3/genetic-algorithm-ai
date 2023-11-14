@@ -50,54 +50,53 @@ def generate_roulette(chromosomes_matrix) -> []:
         roulette_array = roulette_array + [chromosomes_matrix_without_fitness[row]] * (chromosomes_matrix_len - row)
     return roulette_array
 
-def choose_parents(roulette_array) -> []:
-    parents = []
-    first_parent = None
-    second_parent = None
-    rand = 0
+def choose_parents_chromosomes(roulette_array) -> []:
+    parents_chromosomes = []
+    roulette_array_len = len(roulette_array)
+
+    while (len(parents_chromosomes) < 2):
+        parents_chromosomes.clear()
+        parents_chromosomes.append(roulette_array[randint(0, roulette_array_len - 1)])
+        second_parent_index = randint(0, roulette_array_len - 1)
+
+        if (not np.array_equal(parents_chromosomes[0], roulette_array[second_parent_index])):  
+            parents_chromosomes.append(roulette_array[second_parent_index])      
+        continue
+    return parents_chromosomes
+
+def generate_childrens_chromosomes(roulette_array) -> []:
+    final_children_chromosomes = []
+    childrens_chromosomes = []
+    iteration_counter = 0
 
     for _ in range(5):
-        rand = randint(0, len(roulette_array) - 1)
+        parents_chromosomes = choose_parents_chromosomes(roulette_array)
+        parents_chromosomes_len = len(parents_chromosomes)
+        iteration_counter = 0
+        childrens_chromosomes.clear()
 
-        first_parent = roulette_array[rand]
-        parents.append(first_parent)
+        while (len(childrens_chromosomes) < 2):
+            iteration_counter = iteration_counter + 1
 
-        rand = randint(0, len(roulette_array) - 1)
-        second_parent = roulette_array[rand]
+            if (iteration_counter == 1):
+                parents_chromosome_access_index = randint(0, parents_chromosomes_len - 1);
+                parents_chromosomes[0][parents_chromosome_access_index] = parents_chromosomes[1][parents_chromosome_access_index]
+                parents_chromosomes[1][parents_chromosome_access_index] = parents_chromosomes[0][parents_chromosome_access_index]
+                _, duplicated_elements_count = np.unique(parents_chromosomes, return_counts=True)
 
-        while(np.array_equal(first_parent, second_parent)):        
-            rand = randint(0, len(roulette_array) - 1)
-            second_parent = roulette_array[rand]
+                if (np.any(np.where(duplicated_elements_count < 2))):
+                    childrens_chromosomes.extend([parents_chromosomes[0], parents_chromosomes[1]])
+                continue
+            else:
+                _, duplicated_elements_count = np.unique(parents_chromosomes, return_counts=True)
+                duplicated_element_index = np.where(duplicated_elements_count < 2)
+                parents_chromosomes[0][duplicated_element_index[0]] = parents_chromosomes[1][duplicated_element_index[0]]
+                parents_chromosomes[1][duplicated_element_index[0]] = parents_chromosomes[0][duplicated_element_index[0]]
+                _, new_duplicated_elements_count = np.unique(parents_chromosomes, return_counts=True)
 
-        parents.append(second_parent)
-    
-    return parents
+                if (np.any(np.where(new_duplicated_elements_count < 2))):
+                    childrens_chromosomes.extend([parents_chromosomes[0], parents_chromosomes[1]])
+                continue
 
-def create_children(parrents):
-    childrens = []
-    rand = 0
-    parent_a = None
-    parent_b = None
-    value_parent_a = 0
-    value_parent_b = 0
-
-    for index in range(0, 9, 2):
-        parent_a = parrents[index]
-        parent_b = parrents[index + 1]
-        rand = randint(0, 19)
-
-        value_parent_a = parent_a[rand]
-        value_parent_b = parent_b[rand]
-
-        parent_a[rand] = value_parent_b
-        parent_b[rand] = value_parent_a
-
-        repeated_values = np.where(parent_a == value_parent_b)
-
-        while (len(repeated_values[0]) > 1):
-            teste = np.where(repeated_values != rand)
-            print(rand)
-            print(teste)
-            break
-
-        break
+        final_children_chromosomes.extend([childrens_chromosomes[0], childrens_chromosomes[1]])
+    return final_children_chromosomes
