@@ -92,11 +92,13 @@ def create_children(parrents):
         parent_a[rand] = value_parent_b
         parent_b[rand] = value_parent_a
 
-        unique, count = np.unique(parent_a, return_counts=True)
-        #Falta verificar onde está o valor repetido e trocar ele depois
-        while(np.any(count > 1)):
-            pass
+        repeated_values = np.where(parent_a == value_parent_b)
 
+        while(len(repeated_values) > 1):
+            teste = np.where(repeated_values != rand)
+            print(rand)
+            print(teste)
+            break
 
         break
 
