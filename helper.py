@@ -102,4 +102,4 @@ def generate_childrens_chromosomes(roulette_array) -> []:
     return final_children_chromosomes
 
 def get_new_formed_chromosomes(chromosomes_matrix, childrens_chromosomes) -> []:
-    return np.concatenate((chromosomes_matrix[:, :-1], childrens_chromosomes), axis=1)
+    return np.concatenate((chromosomes_matrix[:, :-1], childrens_chromosomes))
