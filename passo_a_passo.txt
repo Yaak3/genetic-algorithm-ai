@@ -8,6 +8,7 @@ quinto - monta a rotela. - A roleta é da seguinte formam
 	o terceiro aparece tres vezes
 	e assim por diante
 sexto - seleciona os pais a partir de números aleatorios na roleta
+	feito
 setimo - gera os filhos com base nos pais da roleta
 	cinco P1 e cinco P2
 	não podem ter números repetidos entre os filhos

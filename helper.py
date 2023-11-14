@@ -1,4 +1,5 @@
 import numpy as np
+from random import randint
 import math
 
 def initialize_chromosomes(chromosomes_matrix) -> []:
@@ -48,3 +49,55 @@ def generate_roulette(chromosomes_matrix) -> []:
     for row in range(chromosomes_matrix_len):
         roulette_array = roulette_array + [chromosomes_matrix_without_fitness[row]] * (chromosomes_matrix_len - row)
     return roulette_array
+
+def choose_parents(roulette_array) -> []:
+    parents = []
+    first_parent = None
+    second_parent = None
+    rand = 0
+
+    for _ in range(5):
+        rand = randint(0, len(roulette_array) - 1)
+
+        first_parent = roulette_array[rand]
+        parents.append(first_parent)
+
+        rand = randint(0, len(roulette_array) - 1)
+        second_parent = roulette_array[rand]
+
+        while(np.array_equal(first_parent, second_parent)):        
+            rand = randint(0, len(roulette_array) - 1)
+            second_parent = roulette_array[rand]
+
+        parents.append(second_parent)
+    
+    return parents
+
+def create_children(parrents):
+    childrens = []
+    rand = 0
+    parent_a = None
+    parent_b = None
+    value_parent_a = 0
+    value_parent_b = 0
+
+    for index in range(0,9,2):
+        parent_a = parrents[index]
+        parent_b = parrents[index + 1]
+        rand = randint(0,19)
+
+        value_parent_a = parent_a[rand]
+        value_parent_b = parent_b[rand]
+
+        parent_a[rand] = value_parent_b
+        parent_b[rand] = value_parent_a
+
+        unique, count = np.unique(parent_a, return_counts=True)
+        #Falta verificar onde está o valor repetido e trocar ele depois
+        while(np.any(count > 1)):
+            pass
+
+
+        break
+
+        
