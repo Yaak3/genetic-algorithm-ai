@@ -1,5 +1,6 @@
 import numpy as np
 from random import randint
+import matplotlib.pyplot as plt
 import math
 
 def initialize_chromosomes(chromosomes_matrix) -> []:
@@ -94,7 +95,7 @@ def generate_childrens_chromosomes(roulette_array) -> []:
                 parents_chromosomes[1][duplicated_element_index[0]] = parents_chromosomes[0][duplicated_element_index[0]]
                 _, new_duplicated_elements_count = np.unique(parents_chromosomes, return_counts=True)
 
-                if (np.any(np.where(new_duplicated_elements_count < 2))):
+                if (not np.any(np.where(new_duplicated_elements_count < 2))):
                     childrens_chromosomes.extend([parents_chromosomes[0], parents_chromosomes[1]])
                 continue
 
@@ -103,3 +104,8 @@ def generate_childrens_chromosomes(roulette_array) -> []:
 
 def get_new_formed_chromosomes(chromosomes_matrix, childrens_chromosomes) -> []:
     return np.concatenate((chromosomes_matrix[:, :-1], childrens_chromosomes))
+
+def display_fitness_results(fitness_results) -> None:
+    plt.pie(fitness_results, autopct='%1.1f%%', startangle=90)
+    plt.title('Fitness Results')
+    plt.show()
