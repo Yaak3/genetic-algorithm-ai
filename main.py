@@ -1,7 +1,7 @@
 import numpy as np
 from helper import *
 
-ITERATION_RANGE = 5
+ITERATION_RANGE = 1
 distances_matrix = np.loadtxt('distances_between_cells.mat')
 chromosomes_matrix = np.zeros((20, 20), dtype=int)
 fitness_results = []
@@ -21,4 +21,4 @@ def execute_genetic_algorithm(chromosomes_matrix):
     print(fitness_results)
 
 execute_genetic_algorithm(chromosomes_matrix)
-display_fitness_results(fitness_results)
+#display_fitness_results(fitness_results)

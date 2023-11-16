@@ -66,41 +66,33 @@ def choose_parents_chromosomes(roulette_array) -> []:
     return parents_chromosomes
 
 def generate_childrens_chromosomes(roulette_array) -> []:
-    final_children_chromosomes = []
     childrens_chromosomes = []
-    iteration_counter = 0
+    chromosome_merge_complete = None
+    parent_a_value = 0
+    parent_b_value = 0
+    gene_index = 0
 
     for _ in range(5):
+        chromosome_merge_complete = False
         parents_chromosomes = choose_parents_chromosomes(roulette_array)
-        parents_chromosomes_len = len(parents_chromosomes)
-        iteration_counter = 0
-        childrens_chromosomes.clear()
+        gene_index = randint(0, 19)
 
-        while (len(childrens_chromosomes) < 2):
-            iteration_counter = iteration_counter + 1
+        while(~chromosome_merge_complete):
+            parent_a_value = parents_chromosomes[0][gene_index]
+            parent_b_value = parents_chromosomes[1][gene_index]
 
-            if (iteration_counter == 1):
-                parents_chromosome_access_index = randint(0, parents_chromosomes_len - 1);
-                parents_chromosomes[0][parents_chromosome_access_index] = parents_chromosomes[1][parents_chromosome_access_index]
-                parents_chromosomes[1][parents_chromosome_access_index] = parents_chromosomes[0][parents_chromosome_access_index]
-                _, duplicated_elements_count = np.unique(parents_chromosomes, return_counts=True)
+            parents_chromosomes[0][gene_index] = parent_b_value
+            parents_chromosomes[1][gene_index] = parent_a_value
 
-                if (np.any(np.where(duplicated_elements_count < 2))):
-                    childrens_chromosomes.extend([parents_chromosomes[0], parents_chromosomes[1]])
-                continue
+            repeat_indices = np.where(parents_chromosomes[0] == parent_b_value)[0]
+
+            if(len(repeat_indices) > 1):
+                gene_index = repeat_indices[np.where(repeat_indices != gene_index)[0][0]]
             else:
-                _, duplicated_elements_count = np.unique(parents_chromosomes, return_counts=True)
-                duplicated_element_index = np.where(duplicated_elements_count < 2)
-                parents_chromosomes[0][duplicated_element_index[0]] = parents_chromosomes[1][duplicated_element_index[0]]
-                parents_chromosomes[1][duplicated_element_index[0]] = parents_chromosomes[0][duplicated_element_index[0]]
-                _, new_duplicated_elements_count = np.unique(parents_chromosomes, return_counts=True)
+                chromosome_merge_complete = True
+                childrens_chromosomes.extend([parents_chromosomes[0], parents_chromosomes[1]])
 
-                if (not np.any(np.where(new_duplicated_elements_count < 2))):
-                    childrens_chromosomes.extend([parents_chromosomes[0], parents_chromosomes[1]])
-                continue
-
-        final_children_chromosomes.extend([childrens_chromosomes[0], childrens_chromosomes[1]])
-    return final_children_chromosomes
+    return childrens_chromosomes
 
 def get_new_formed_chromosomes(chromosomes_matrix, childrens_chromosomes) -> []:
     return np.concatenate((chromosomes_matrix[:, :-1], childrens_chromosomes))
