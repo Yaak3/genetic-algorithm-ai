@@ -43,15 +43,9 @@ def get_best_chromosomes_from_matrix(chromosomes_matrix) -> []:
     return chromosomes_matrix[:10, :]
 
 def generate_roulette(chromosomes_matrix) -> []:
-    roulette_array = []
-    chromosomes_matrix_without_fitness = chromosomes_matrix[:, :-1]
-    chromosomes_matrix_len = len(chromosomes_matrix)
+    return np.repeat(chromosomes_matrix, range(len(chromosomes_matrix), 0, -1), axis=0)
 
-    for row in range(chromosomes_matrix_len):
-        roulette_array = roulette_array + [chromosomes_matrix_without_fitness[row]] * (chromosomes_matrix_len - row)
-    return roulette_array
-
-def choose_parents_chromosomes(roulette_array) -> []:
+def choose_parent_chromosomes(roulette_array) -> []:
     parents_chromosomes = []
     roulette_array_len = len(roulette_array)
 
@@ -61,17 +55,18 @@ def choose_parents_chromosomes(roulette_array) -> []:
         second_parent_index = randint(0, roulette_array_len - 1)
 
         if (not np.array_equal(parents_chromosomes[0], roulette_array[second_parent_index])):  
-            parents_chromosomes.append(roulette_array[second_parent_index])      
+            parents_chromosomes.append(roulette_array[second_parent_index])
         continue
+
     return parents_chromosomes
 
-def generate_childrens_chromosomes(roulette_array) -> []:
+def generate_children_chromosomes(roulette_array) -> []:
     final_children_chromosomes = []
     childrens_chromosomes = []
     iteration_counter = 0
 
     for _ in range(5):
-        parents_chromosomes = choose_parents_chromosomes(roulette_array)
+        parents_chromosomes = choose_parent_chromosomes(roulette_array)
         parents_chromosomes_len = len(parents_chromosomes)
         iteration_counter = 0
         childrens_chromosomes.clear()
@@ -87,7 +82,6 @@ def generate_childrens_chromosomes(roulette_array) -> []:
 
                 if (np.any(np.where(duplicated_elements_count < 2))):
                     childrens_chromosomes.extend([parents_chromosomes[0], parents_chromosomes[1]])
-                continue
             else:
                 _, duplicated_elements_count = np.unique(parents_chromosomes, return_counts=True)
                 duplicated_element_index = np.where(duplicated_elements_count < 2)
@@ -100,12 +94,36 @@ def generate_childrens_chromosomes(roulette_array) -> []:
                 continue
 
         final_children_chromosomes.extend([childrens_chromosomes[0], childrens_chromosomes[1]])
+    
+    return generate_mutated_children_chromosomes(final_children_chromosomes)
+
+def generate_mutated_children_chromosomes(final_children_chromosomes) -> []:
+    for children_chromosome in final_children_chromosomes:
+        children_chromosome_len = len(children_chromosome)
+        first_randomized_index = randint(0, children_chromosome_len - 1)
+        second_randomized_index = randint(0, children_chromosome_len - 1)
+
+        while (first_randomized_index == second_randomized_index):
+            second_randomized_index = randint(0, children_chromosome_len - 1)
+        
+        children_chromosome[first_randomized_index] = children_chromosome[second_randomized_index]
+        children_chromosome[second_randomized_index] = children_chromosome[first_randomized_index]
+
     return final_children_chromosomes
 
 def get_new_formed_chromosomes(chromosomes_matrix, childrens_chromosomes) -> []:
-    return np.concatenate((chromosomes_matrix[:, :-1], childrens_chromosomes))
+    return np.concatenate((chromosomes_matrix[:, :-1], childrens_chromosomes), axis=0)
 
 def display_fitness_results(fitness_results) -> None:
-    plt.pie(fitness_results, autopct='%1.1f%%', startangle=90)
+    labels_array = []
+
+    for index in range(len(fitness_results)):
+        plus_index = index + 1
+        label_value = 'Best value for population ' + str(plus_index)
+        labels_array.append(label_value)
+
+    plt.bar(np.flipud(np.array(labels_array)), np.flipud(fitness_results))
+    plt.xlabel('Populations')
+    plt.ylabel('Best values')
     plt.title('Fitness Results')
     plt.show()
