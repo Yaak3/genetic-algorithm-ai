@@ -114,16 +114,14 @@ def generate_mutated_children_chromosomes(final_children_chromosomes) -> []:
 def get_new_formed_chromosomes(chromosomes_matrix, childrens_chromosomes) -> []:
     return np.concatenate((chromosomes_matrix[:, :-1], childrens_chromosomes), axis=0)
 
-def display_fitness_results(fitness_results) -> None:
-    labels_array = []
+def display_fitness_results(fitness_results, ITERATION_RANGE) -> None:
+    x_array = []
 
-    for index in range(len(fitness_results)):
-        plus_index = index + 1
-        label_value = 'Best value for population ' + str(plus_index)
-        labels_array.append(label_value)
+    for index in range(ITERATION_RANGE):
+        x_array.append(index)
 
-    plt.bar(np.flipud(np.array(labels_array)), np.flipud(fitness_results))
-    plt.xlabel('Populations')
-    plt.ylabel('Best values')
-    plt.title('Fitness Results')
+    plt.plot(x_array, fitness_results)
+    plt.xlabel('Iteration Range')
+    plt.ylabel('Fitness Values')
+    plt.title('Genetic Algorithm (Salesman Problematic)')
     plt.show()
