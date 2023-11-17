@@ -1,7 +1,7 @@
-import numpy as np
-from random import randint
-import matplotlib.pyplot as plt
 import math
+import numpy as np
+import matplotlib.pyplot as plt
+from random import randint
 
 def initialize_chromosomes(chromosomes_matrix) -> []:
     for row in range(len(chromosomes_matrix)):
@@ -26,7 +26,6 @@ def get_calculated_fitness(chromosomes_matrix, distances_matrix) -> []:
                                                               distances_matrix[1][chromosome[index + 1]])
         fitness_utility.append(total_distance)
         total_distance = 0
-
     return np.reshape(fitness_utility, (20, 1))
 
 def execute_fitness_calculation(origin_chromosome_x, origin_chromosome_y, destiny_chromosome_x, destiny_chromosome_y) -> float:
@@ -48,54 +47,31 @@ def generate_roulette(chromosomes_matrix) -> []:
 def choose_parent_chromosomes(roulette_array) -> []:
     parents_chromosomes = []
     roulette_array_len = len(roulette_array)
-
-    while (len(parents_chromosomes) < 2):
-        parents_chromosomes.clear()
-        parents_chromosomes.append(roulette_array[randint(0, roulette_array_len - 1)])
-        second_parent_index = randint(0, roulette_array_len - 1)
-
-        if (not np.array_equal(parents_chromosomes[0], roulette_array[second_parent_index])):  
-            parents_chromosomes.append(roulette_array[second_parent_index])
-        continue
-
+    parents_chromosomes.extend([roulette_array[randint(0, roulette_array_len - 1)], roulette_array[randint(0, roulette_array_len - 1)]])
     return parents_chromosomes
 
 def generate_children_chromosomes(roulette_array) -> []:
-    final_children_chromosomes = []
-    childrens_chromosomes = []
-    iteration_counter = 0
+    children_chromosomes = []
 
     for _ in range(5):
-        parents_chromosomes = choose_parent_chromosomes(roulette_array)
-        parents_chromosomes_len = len(parents_chromosomes)
-        iteration_counter = 0
-        childrens_chromosomes.clear()
+        chromosome_recombination_completed = False
+        parent_chromosomes = choose_parent_chromosomes(roulette_array)
+        gene_index = randint(0, 19)
 
-        while (len(childrens_chromosomes) < 2):
-            iteration_counter = iteration_counter + 1
+        while (not chromosome_recombination_completed):
+            first_parent_value = parent_chromosomes[0][gene_index]
+            second_parent_value = parent_chromosomes[1][gene_index]
+            parent_chromosomes[0][gene_index] = second_parent_value
+            parent_chromosomes[1][gene_index] = first_parent_value
+            repeated_indexes = np.where(parent_chromosomes[0] == second_parent_value)[0]
 
-            if (iteration_counter == 1):
-                parents_chromosome_access_index = randint(0, parents_chromosomes_len - 1);
-                parents_chromosomes[0][parents_chromosome_access_index] = parents_chromosomes[1][parents_chromosome_access_index]
-                parents_chromosomes[1][parents_chromosome_access_index] = parents_chromosomes[0][parents_chromosome_access_index]
-                _, duplicated_elements_count = np.unique(parents_chromosomes, return_counts=True)
-
-                if (np.any(np.where(duplicated_elements_count < 2))):
-                    childrens_chromosomes.extend([parents_chromosomes[0], parents_chromosomes[1]])
+            if (len(repeated_indexes) > 1):
+                gene_index = repeated_indexes[np.where(repeated_indexes != gene_index)[0][0]]
             else:
-                _, duplicated_elements_count = np.unique(parents_chromosomes, return_counts=True)
-                duplicated_element_index = np.where(duplicated_elements_count < 2)
-                parents_chromosomes[0][duplicated_element_index[0]] = parents_chromosomes[1][duplicated_element_index[0]]
-                parents_chromosomes[1][duplicated_element_index[0]] = parents_chromosomes[0][duplicated_element_index[0]]
-                _, new_duplicated_elements_count = np.unique(parents_chromosomes, return_counts=True)
-
-                if (not np.any(np.where(new_duplicated_elements_count < 2))):
-                    childrens_chromosomes.extend([parents_chromosomes[0], parents_chromosomes[1]])
-                continue
-
-        final_children_chromosomes.extend([childrens_chromosomes[0], childrens_chromosomes[1]])
-    
-    return generate_mutated_children_chromosomes(final_children_chromosomes)
+                chromosome_recombination_completed = True
+                children_chromosomes.extend([parent_chromosomes[0], parent_chromosomes[1]])
+            continue
+    return generate_mutated_children_chromosomes(children_chromosomes)
 
 def generate_mutated_children_chromosomes(final_children_chromosomes) -> []:
     for children_chromosome in final_children_chromosomes:
@@ -110,7 +86,6 @@ def generate_mutated_children_chromosomes(final_children_chromosomes) -> []:
         second_children_value = children_chromosome[second_randomized_index]
         children_chromosome[first_randomized_index] = second_children_value
         children_chromosome[second_randomized_index] = first_children_value
-
     return final_children_chromosomes
 
 def get_new_formed_chromosomes(chromosomes_matrix, childrens_chromosomes) -> []:

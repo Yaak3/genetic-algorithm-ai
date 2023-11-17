@@ -1,7 +1,7 @@
 import numpy as np
 from helper import *
 
-ITERATION_RANGE = 1
+ITERATION_RANGE = 10000
 distances_matrix = np.loadtxt('distances_between_cells.mat')
 chromosomes_matrix = np.zeros((20, 20), dtype=int)
 fitness_results = []
