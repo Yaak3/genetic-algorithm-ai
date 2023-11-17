@@ -105,9 +105,11 @@ def generate_mutated_children_chromosomes(final_children_chromosomes) -> []:
 
         while (first_randomized_index == second_randomized_index):
             second_randomized_index = randint(0, children_chromosome_len - 1)
-        
-        children_chromosome[first_randomized_index] = children_chromosome[second_randomized_index]
-        children_chromosome[second_randomized_index] = children_chromosome[first_randomized_index]
+
+        first_children_value = children_chromosome[first_randomized_index]
+        second_children_value = children_chromosome[second_randomized_index]
+        children_chromosome[first_randomized_index] = second_children_value
+        children_chromosome[second_randomized_index] = first_children_value
 
     return final_children_chromosomes
 
